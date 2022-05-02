@@ -49,7 +49,7 @@ public class MainFPJ extends JavaPlugin implements Listener {
 
 	public boolean onCommand(CommandSender sender, Command cmd, String Label, String[] args) {
 		if (cmd.getName().equalsIgnoreCase("fpj")) {
-			if (sender.hasPermission("FixProxyJoin.cmd.fpj")) {
+			if (sender.hasPermission("fpj.enter")) {
 				if (args.length == 0) {
 					sender.sendMessage(ChatColor.GOLD + " [FixProxyJoin] " + ChatColor.GREEN + "Адрес сохранён");
 				    return false;
