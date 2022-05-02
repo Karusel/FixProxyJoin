@@ -7,5 +7,5 @@ The plugin allows you to get the IP address of BungeeCord when a player connects
 <br/>
 If the IP address does not match your proxy server, the player will not be able to join.
 
-h5 **Command**
+##### **Command**
 ***
