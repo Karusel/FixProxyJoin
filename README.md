@@ -1,2 +1,0 @@
-# FixProxyJoin
-Minecraft server plugins
