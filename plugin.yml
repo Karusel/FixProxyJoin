@@ -8,5 +8,5 @@ commands:
    fpj:
       description: Команда для ввода ip-адреса.
       usage: /<fpj> [ip]
-      permission: <plugin name>.fpj
+      permission: fpj.enter
       permission-message: Нет разрешения <permission>
