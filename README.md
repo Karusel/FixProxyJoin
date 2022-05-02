@@ -9,3 +9,4 @@ If the IP address does not match your proxy server, the player will not be able 
 
 #### Command
 ***
+> /fpj ip:port
