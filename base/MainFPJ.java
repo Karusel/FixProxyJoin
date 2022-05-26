@@ -1,6 +1,7 @@
 package base;
 
 import java.io.File;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -29,39 +30,78 @@ public class MainFPJ extends JavaPlugin implements Listener {
 
 	@EventHandler
 	public void login(PlayerLoginEvent e) {
-		String ip = e.getRealAddress().toString().replaceAll("[/]", "");
-		String Bungee = e.getHostname().split(":")[0];
-		String Bungeecord = e.getHostname();
-
-		if (! Bungee.equals(ip)) {
-			e.disallow(null, "Произошла ошибка, возможно вы пытаетесь войти не через Bungeecord");
+		boolean check = false;
+		String BungeeIp = e.getHostname();
+		String ipPlayer = e.getAddress().toString().replaceAll("[/]", "");
+		for (String ip : getConfig().getStringList("Bungeecord-ip")) {
+			if (BungeeIp.equals(ip)) {
+				check = true;
+			}
 		}
 
-		String ipConfig = getConfig().getString("Bungeecord-ip");
-		String ipPlayer = e.getAddress().toString().replaceAll("[/]", "");
-		if (Bungeecord.equals(ipConfig)) {
+		if (check == true) {
 			Bukkit.getLogger().info("[FixProxyJoin] Легальное соединение с ip: " + ipPlayer);
 		} else {
-			Bukkit.getConsoleSender().sendMessage("[FixProxyJoin] Нелегальное соединение с ip: " + ipPlayer+" ["+Bungeecord+"]");
+			Bukkit.getConsoleSender()
+					.sendMessage("[FixProxyJoin] Нелегальное соединение с ip: " + ipPlayer + " [" + BungeeIp + "]");
 			e.disallow(null, "Пожалуйста, войдите с помощью Bungeecord");
 		}
 	}
+	
+	public boolean listCheck(String value) {
+		boolean check = false;
+		for (String ip : getConfig().getStringList("Bungeecord-ip")) {
+			if (value.equals(ip)) {
+			 check = true;
+			}
+		}
+		return check;
+	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String Label, String[] args) {
+		List<String> list = this.getConfig().getStringList("Bungeecord-ip");
 		if (cmd.getName().equalsIgnoreCase("fpj")) {
 			if (sender.hasPermission("fpj.enter")) {
 				if (args.length == 0) {
 					sender.sendMessage(ChatColor.GOLD + " [FixProxyJoin] " + ChatColor.GREEN + "Адрес сохранён");
-				    return false;
+					return false;
 				} else {
+					boolean check = listCheck(args[0]);
+					if (check != true) {
 					FileConfiguration config = getConfig();
-					config.set("Bungeecord-ip", args[0]);
+					list.add(args[0]);
+					config.set("Bungeecord-ip", list);
 					saveConfig();
 					sender.sendMessage(ChatColor.GOLD + " [FixProxyJoin] " + ChatColor.GREEN + "Адрес сохранён");
+					}else {
+					sender.sendMessage(ChatColor.RED + "Уже есть в списке");
+					}
 				}
 				return true;
 			}
 		}
+
+		if (cmd.getName().equalsIgnoreCase("fpjdel")) {
+			if (sender.hasPermission("fpj.del")) {
+				if (args.length == 0) {
+					sender.sendMessage(ChatColor.GOLD + " [FixProxyJoin] " + ChatColor.GREEN + "Адрес удалён");
+					return false;
+				} else {
+					boolean check = listCheck(args[0]);
+					if (check == true) {
+					FileConfiguration config = getConfig();
+					list.remove(args[0]);
+					config.set("Bungeecord-ip", list);
+					saveConfig();
+					sender.sendMessage(ChatColor.GOLD + " [FixProxyJoin] " + ChatColor.GREEN + "Адрес удалён");
+				}else {
+					sender.sendMessage(ChatColor.RED + "Не найден");
+					}
+				}
+				return true;
+			}
+		}
+
 		return false;
 	}
 }
